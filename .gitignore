@@ -1,0 +1,9 @@
+cat > .gitignore << 'EOF'
+.env
+khayal.db
+khayal_test.db
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+EOF

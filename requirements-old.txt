@@ -1,0 +1,21 @@
+flask==3.0.0
+requests==2.31.0
+python-dotenv==1.0.0
+groq==0.4.0
+schedule==1.2.0
+```
+
+**File 2: `Procfile`**
+```
+web: python whatsapp_webhook_v4.py
+worker: python scheduler.py
+```
+
+**File 3: `.gitignore`**
+```
+.env
+khayal.db
+khayal_test.db
+__pycache__/
+*.pyc
+.DS_Store

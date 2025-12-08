@@ -1,0 +1,44 @@
+name: Daily Summary Scheduler
+
+on:
+  schedule:
+    # Runs at 10:00 PM IST = 4:30 PM UTC
+    # Adjust if needed: use https://crontab.guru/
+    - cron: '30 16 * * *'
+  
+  # Allow manual triggering for testing
+  workflow_dispatch:
+
+jobs:
+  send-summaries:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send Daily Summaries
+        run: |
+          echo "🌙 Triggering daily summaries at $(date)"
+          
+          response=$(curl -s -w "\n%{http_code}" -X POST \
+            ${{ secrets.RENDER_APP_URL }}/trigger-summaries \
+            -H "Authorization: Bearer ${{ secrets.SCHEDULER_SECRET }}" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          echo "HTTP Status: $http_code"
+          echo "Response Body: $body"
+          
+          if [ "$http_code" != "200" ]; then
+            echo "❌ Error: Failed to trigger summaries"
+            exit 1
+          fi
+          
+          echo "✅ Daily summaries triggered successfully!"
+      
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Failed to send daily summaries"
+          echo "Time: $(date)"
+          # Add Slack/Discord notification here if needed

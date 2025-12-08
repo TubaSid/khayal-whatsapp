@@ -1,0 +1,23 @@
+name: Keep Render Awake
+
+on:
+  schedule:
+    # Ping every 10 minutes to prevent sleep
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping Health Endpoint
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            ${{ secrets.RENDER_APP_URL }}/health)
+          
+          if [ "$response" == "200" ]; then
+            echo "✅ Khayal is awake (HTTP $response)"
+          else
+            echo "⚠️  Warning: Service returned HTTP $response"
+          fi
