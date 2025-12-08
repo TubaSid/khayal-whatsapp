@@ -1,5 +1,8 @@
 # Add these methods to your KhayalDatabase class
 
+import datetime
+
+
 def get_user_messages_today(self, user_id: int) -> list:
     """Get all messages for a user from today"""
     conn = self.get_connection()
