@@ -1,126 +1,183 @@
 # onboarding.py
-# User Onboarding & Preferences System
-# Professional first-time user experience
+# User Onboarding & Preferences System (PostgreSQL Compatible)
 
 from typing import Dict, Optional
 from datetime import datetime, time
 import json
 import re
+import os
+
+# Detect if we're using PostgreSQL
+USE_POSTGRES = os.getenv('DATABASE_URL') is not None
 
 class OnboardingManager:
     """Manage user onboarding and preferences"""
     
     def __init__(self, database):
         self.db = database
+        self.use_postgres = USE_POSTGRES
         self._create_preferences_table()
+    
+    def _get_placeholder(self):
+        """Get SQL placeholder based on database type"""
+        return '%s' if self.use_postgres else '?'
     
     def _create_preferences_table(self):
         """Create user preferences table"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS user_preferences (
-                user_id INTEGER PRIMARY KEY,
-                name TEXT,
-                language_preference TEXT DEFAULT 'mixed',
-                summary_time TEXT DEFAULT '22:00',
-                summary_enabled BOOLEAN DEFAULT 1,
-                timezone TEXT DEFAULT 'Asia/Kolkata',
-                onboarding_completed BOOLEAN DEFAULT 0,
-                onboarding_step INTEGER DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            )
-        """)
+        if self.use_postgres:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS user_preferences (
+                    user_id INTEGER PRIMARY KEY REFERENCES users(id),
+                    name VARCHAR(255),
+                    language_preference VARCHAR(20) DEFAULT 'mixed',
+                    summary_time VARCHAR(10) DEFAULT '22:00',
+                    summary_enabled BOOLEAN DEFAULT TRUE,
+                    timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
+                    onboarding_completed BOOLEAN DEFAULT FALSE,
+                    onboarding_step INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+        else:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS user_preferences (
+                    user_id INTEGER PRIMARY KEY,
+                    name TEXT,
+                    language_preference TEXT DEFAULT 'mixed',
+                    summary_time TEXT DEFAULT '22:00',
+                    summary_enabled BOOLEAN DEFAULT 1,
+                    timezone TEXT DEFAULT 'Asia/Kolkata',
+                    onboarding_completed BOOLEAN DEFAULT 0,
+                    onboarding_step INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id)
+                )
+            """)
         
-        self.db.conn.commit()
+        conn.commit()
+        conn.close()
     
     def is_new_user(self, user_id: int) -> bool:
         """Check if user is brand new"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
+        ph = self._get_placeholder()
+        cursor.execute(f"""
             SELECT COUNT(*) as count
             FROM messages
-            WHERE user_id = ?
+            WHERE user_id = {ph}
         """, (user_id,))
         
-        message_count = cursor.fetchone()['count']
+        result = cursor.fetchone()
+        message_count = result['count'] if self.use_postgres else result[0]
+        conn.close()
         return message_count == 0
     
     def is_onboarding_complete(self, user_id: int) -> bool:
         """Check if user completed onboarding"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
+        ph = self._get_placeholder()
+        cursor.execute(f"""
             SELECT onboarding_completed
             FROM user_preferences
-            WHERE user_id = ?
+            WHERE user_id = {ph}
         """, (user_id,))
         
         result = cursor.fetchone()
+        conn.close()
         
         if result is None:
-            # No preferences record exists - user is new
             return False
         
-        # Check the boolean value
-        completed = result['onboarding_completed']
-        
-        # Handle both integer (0/1) and boolean
+        completed = result['onboarding_completed'] if self.use_postgres else result[0]
         return bool(completed) if completed is not None else False
     
     def get_onboarding_step(self, user_id: int) -> int:
         """Get current onboarding step"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
+        ph = self._get_placeholder()
+        cursor.execute(f"""
             SELECT onboarding_step
             FROM user_preferences
-            WHERE user_id = ?
+            WHERE user_id = {ph}
         """, (user_id,))
         
         result = cursor.fetchone()
         
         if result:
-            return result['onboarding_step']
+            step = result['onboarding_step'] if self.use_postgres else result[0]
+            conn.close()
+            return step
         
         # Create preferences record
-        cursor.execute("""
+        cursor.execute(f"""
             INSERT INTO user_preferences (user_id, onboarding_step)
-            VALUES (?, 0)
-        """, (user_id,))
-        self.db.conn.commit()
+            VALUES ({ph}, {ph})
+        """, (user_id, 0))
+        conn.commit()
+        conn.close()
         
         return 0
     
     def set_onboarding_step(self, user_id: int, step: int):
         """Update onboarding step"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            UPDATE user_preferences
-            SET onboarding_step = ?,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE user_id = ?
-        """, (step, user_id))
+        ph = self._get_placeholder()
+        if self.use_postgres:
+            cursor.execute(f"""
+                UPDATE user_preferences
+                SET onboarding_step = {ph},
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = {ph}
+            """, (step, user_id))
+        else:
+            cursor.execute(f"""
+                UPDATE user_preferences
+                SET onboarding_step = {ph},
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = {ph}
+            """, (step, user_id))
         
-        self.db.conn.commit()
+        conn.commit()
+        conn.close()
     
     def complete_onboarding(self, user_id: int):
         """Mark onboarding as complete"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            UPDATE user_preferences
-            SET onboarding_completed = 1,
-                onboarding_step = -1,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE user_id = ?
-        """, (user_id,))
+        ph = self._get_placeholder()
+        if self.use_postgres:
+            cursor.execute(f"""
+                UPDATE user_preferences
+                SET onboarding_completed = TRUE,
+                    onboarding_step = -1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = {ph}
+            """, (user_id,))
+        else:
+            cursor.execute(f"""
+                UPDATE user_preferences
+                SET onboarding_completed = 1,
+                    onboarding_step = -1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = {ph}
+            """, (user_id,))
         
-        self.db.conn.commit()
+        conn.commit()
+        conn.close()
     
     def get_onboarding_message(self, step: int) -> Dict:
         """Get onboarding message for specific step"""
@@ -199,12 +256,7 @@ So... kya haal hai? How are you feeling today? 😊""",
         
         return messages.get(step, messages[0])
     
-    def process_onboarding_response(
-        self,
-        user_id: int,
-        current_step: int,
-        user_response: str
-    ) -> Dict:
+    def process_onboarding_response(self, user_id: int, current_step: int, user_response: str) -> Dict:
         """Process user's response during onboarding"""
         
         response_lower = user_response.lower().strip()
@@ -282,7 +334,6 @@ So... kya haal hai? How are you feeling today? 😊""",
         if "yes" in time_str or "ok" in time_str or "fine" in time_str:
             return "22:00"
         
-        # Pattern 1: "9:30 PM" or "21:00"
         match = re.search(r'(\d{1,2}):(\d{2})\s*(am|pm)?', time_str)
         if match:
             hour = int(match.group(1))
@@ -297,7 +348,6 @@ So... kya haal hai? How are you feeling today? 😊""",
             if 0 <= hour <= 23 and 0 <= minute <= 59:
                 return f"{hour:02d}:{minute:02d}"
         
-        # Pattern 2: "9 PM" or "9PM"
         match = re.search(r'(\d{1,2})\s*(am|pm)', time_str)
         if match:
             hour = int(match.group(1))
@@ -311,7 +361,6 @@ So... kya haal hai? How are you feeling today? 😊""",
             if 0 <= hour <= 23:
                 return f"{hour:02d}:00"
         
-        # Pattern 3: Just "9" or "21"
         match = re.search(r'^\d{1,2}$', time_str)
         if match:
             hour = int(match.group(0))
@@ -326,40 +375,58 @@ So... kya haal hai? How are you feeling today? 😊""",
     
     def set_preference(self, user_id: int, key: str, value: any):
         """Set a specific preference"""
-        cursor = self.db.conn.cursor()
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
+        ph = self._get_placeholder()
+        
+        cursor.execute(f"""
             SELECT COUNT(*) as count
             FROM user_preferences
-            WHERE user_id = ?
-        """, (user_id,))
-        
-        if cursor.fetchone()['count'] == 0:
-            cursor.execute(f"""
-                INSERT INTO user_preferences (user_id, {key})
-                VALUES (?, ?)
-            """, (user_id, value))
-        else:
-            cursor.execute(f"""
-                UPDATE user_preferences
-                SET {key} = ?,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE user_id = ?
-            """, (value, user_id))
-        
-        self.db.conn.commit()
-    
-    def get_preferences(self, user_id: int) -> Dict:
-        """Get all user preferences"""
-        cursor = self.db.conn.cursor()
-        
-        cursor.execute("""
-            SELECT *
-            FROM user_preferences
-            WHERE user_id = ?
+            WHERE user_id = {ph}
         """, (user_id,))
         
         result = cursor.fetchone()
+        count = result['count'] if self.use_postgres else result[0]
+        
+        if count == 0:
+            cursor.execute(f"""
+                INSERT INTO user_preferences (user_id, {key})
+                VALUES ({ph}, {ph})
+            """, (user_id, value))
+        else:
+            if self.use_postgres:
+                cursor.execute(f"""
+                    UPDATE user_preferences
+                    SET {key} = {ph},
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = {ph}
+                """, (value, user_id))
+            else:
+                cursor.execute(f"""
+                    UPDATE user_preferences
+                    SET {key} = {ph},
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = {ph}
+                """, (value, user_id))
+        
+        conn.commit()
+        conn.close()
+    
+    def get_preferences(self, user_id: int) -> Dict:
+        """Get all user preferences"""
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
+        
+        ph = self._get_placeholder()
+        cursor.execute(f"""
+            SELECT *
+            FROM user_preferences
+            WHERE user_id = {ph}
+        """, (user_id,))
+        
+        result = cursor.fetchone()
+        conn.close()
         
         if result:
             return dict(result)
@@ -372,69 +439,3 @@ So... kya haal hai? How are you feeling today? 😊""",
             "timezone": "Asia/Kolkata",
             "onboarding_completed": False
         }
-
-
-# TESTING
-if __name__ == "__main__":
-    from database import KhayalDatabase
-    
-    print("="*60)
-    print("👋 TESTING ONBOARDING SYSTEM")
-    print("="*60)
-    
-    db = KhayalDatabase("khayal_test.db")
-    onboarding = OnboardingManager(db)
-    
-    test_phone = "919999999999"
-    user_id = db.get_or_create_user(test_phone)
-    
-    print(f"\n✅ Created test user: {user_id}")
-    print(f"Is new user: {onboarding.is_new_user(user_id)}")
-    print(f"Onboarding complete: {onboarding.is_onboarding_complete(user_id)}")
-    
-    print("\n" + "─"*60)
-    print("SIMULATING ONBOARDING FLOW")
-    print("─"*60)
-    
-    step = onboarding.get_onboarding_step(user_id)
-    welcome = onboarding.get_onboarding_message(step)
-    print(f"\n🌙 Khayal:")
-    print(welcome["message"])
-    
-    print(f"\n👤 User: Hi!")
-    result = onboarding.process_onboarding_response(user_id, step, "Hi!")
-    print(f"\n🌙 Khayal:")
-    print(result["message"])
-    
-    print(f"\n👤 User: I'm Rahul")
-    result = onboarding.process_onboarding_response(user_id, 1, "I'm Rahul")
-    print(f"\n🌙 Khayal:")
-    print(result["message"])
-    
-    print(f"\n👤 User: 9 PM please")
-    result = onboarding.process_onboarding_response(user_id, 2, "9 PM please")
-    print(f"\n🌙 Khayal:")
-    print(result["message"])
-    
-    print(f"\n👤 User: Mixed")
-    result = onboarding.process_onboarding_response(user_id, 3, "Mixed")
-    print(f"\n🌙 Khayal:")
-    print(result["message"])
-    
-    print(f"\n{'─'*60}")
-    print("FINAL STATE")
-    print(f"{'─'*60}")
-    print(f"Onboarding complete: {onboarding.is_onboarding_complete(user_id)}")
-    
-    prefs = onboarding.get_preferences(user_id)
-    print(f"\nUser Preferences:")
-    print(f"  Name: {prefs['name']}")
-    print(f"  Summary time: {prefs['summary_time']}")
-    print(f"  Language: {prefs['language_preference']}")
-    print(f"  Summary enabled: {prefs['summary_enabled']}")
-    
-    print("\n" + "="*60)
-    print("✅ Onboarding system testing complete!")
-    print("="*60)
-    
-    db.close()
