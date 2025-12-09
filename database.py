@@ -22,21 +22,28 @@ class KhayalDatabase:
     def __init__(self, sqlite_path="khayal.db"):
         self.sqlite_path = sqlite_path
         self.use_postgres = USE_POSTGRES
-        self.init_database()
-    
-    def get_connection(self):
-        """Get database connection"""
+        
+        # 🚨 FIX 1: Establish and assign the persistent connection to 'self.conn'
         if self.use_postgres:
-            return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+            self.conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
         else:
             conn = sqlite3.connect(self.sqlite_path)
             conn.row_factory = sqlite3.Row
-            return conn
+            self.conn = conn
+            
+        # Initialize tables using the persistent connection
+        self.init_database() 
+    
+    # 🚨 NOTE: get_connection is no longer needed but kept for potential future use, 
+    # though methods will now use self.conn directly.
+    def get_connection(self):
+        """Returns the persistent database connection."""
+        return self.conn
     
     def init_database(self):
-        """Initialize tables"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        """Initialize tables using the persistent connection."""
+        # Use self.conn directly
+        cursor = self.conn.cursor() 
         
         if self.use_postgres:
             # PostgreSQL
@@ -113,14 +120,14 @@ class KhayalDatabase:
                 )
             ''')
         
-        conn.commit()
-        conn.close()
+        self.conn.commit()
+        # 🚨 FIX 2: REMOVE conn.close()
         print(f"✅ Database ready ({'PostgreSQL' if self.use_postgres else 'SQLite'})")
     
     def get_or_create_user(self, phone_number: str) -> int:
         """Get or create user"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 3: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('SELECT id FROM users WHERE phone_number = %s', (phone_number,))
@@ -133,7 +140,7 @@ class KhayalDatabase:
                     (phone_number,)
                 )
                 user_id = cursor.fetchone()['id']
-                conn.commit()
+                self.conn.commit()
         else:
             cursor.execute('SELECT id FROM users WHERE phone_number = ?', (phone_number,))
             result = cursor.fetchone()
@@ -142,16 +149,16 @@ class KhayalDatabase:
             else:
                 cursor.execute('INSERT INTO users (phone_number) VALUES (?)', (phone_number,))
                 user_id = cursor.lastrowid
-                conn.commit()
+                self.conn.commit()
         
-        conn.close()
+        # 🚨 FIX 4: REMOVE conn.close()
         return user_id
     
     def store_user_message(self, user_id: int, content: str, mood: str = None,
-                          intensity: int = None, themes: list = None, needs_support: bool = False):
+                           intensity: int = None, themes: list = None, needs_support: bool = False):
         """Store user message"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 5: Use self.conn directly
+        cursor = self.conn.cursor()
         
         themes_str = ','.join(themes) if themes else None
         
@@ -166,13 +173,13 @@ class KhayalDatabase:
                 VALUES (?, ?, 1, ?, ?, ?, ?)
             ''', (user_id, content, mood, intensity, themes_str, 1 if needs_support else 0))
         
-        conn.commit()
-        conn.close()
+        self.conn.commit()
+        # 🚨 FIX 6: REMOVE conn.close()
     
     def store_khayal_message(self, user_id: int, content: str):
         """Store Khayal's message"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 7: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('''
@@ -185,13 +192,13 @@ class KhayalDatabase:
                 VALUES (?, ?, 0)
             ''', (user_id, content))
         
-        conn.commit()
-        conn.close()
+        self.conn.commit()
+        # 🚨 FIX 8: REMOVE conn.close()
     
     def get_user_messages_today(self, user_id: int) -> list:
         """Get today's messages"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 9: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('''
@@ -209,13 +216,13 @@ class KhayalDatabase:
             ''', (user_id,))
         
         messages = [dict(row) for row in cursor.fetchall()]
-        conn.close()
+        # 🚨 FIX 10: REMOVE conn.close()
         return messages
     
     def get_active_users_today(self) -> list:
         """Get active users today"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 11: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('''
@@ -233,13 +240,13 @@ class KhayalDatabase:
             ''')
         
         users = [dict(row) for row in cursor.fetchall()]
-        conn.close()
+        # 🚨 FIX 12: REMOVE conn.close()
         return users
     
     def get_recent_messages(self, user_id: int, limit: int = 10) -> list:
         """Get recent messages"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 13: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('''
@@ -257,13 +264,13 @@ class KhayalDatabase:
             ''', (user_id, limit))
         
         messages = [dict(row) for row in cursor.fetchall()]
-        conn.close()
+        # 🚨 FIX 14: REMOVE conn.close()
         return list(reversed(messages))
     
     def get_user_stats(self, user_id: int) -> dict:
         """Get user stats"""
-        conn = self.get_connection()
-        cursor = conn.cursor()
+        # 🚨 FIX 15: Use self.conn directly
+        cursor = self.conn.cursor()
         
         if self.use_postgres:
             cursor.execute('''
@@ -281,5 +288,7 @@ class KhayalDatabase:
             ''', (user_id,))
         
         stats = dict(cursor.fetchone())
-        conn.close()
+        # 🚨 FIX 16: REMOVE conn.close()
         return stats
+
+# End of database.py
