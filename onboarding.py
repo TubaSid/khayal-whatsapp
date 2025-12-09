@@ -86,7 +86,7 @@ class OnboardingManager:
         
         ph = self._get_placeholder()
         cursor.execute(f"""
-            SELECT onboarding_completed
+            SELECT onboarding_complete
             FROM user_preferences
             WHERE user_id = {ph}
         """, (user_id,))
@@ -97,7 +97,7 @@ class OnboardingManager:
         if result is None:
             return False
         
-        completed = result['onboarding_completed'] if self.use_postgres else result[0]
+        completed = result['onboarding_complete'] if self.use_postgres else result[0]
         return bool(completed) if completed is not None else False
     
     def get_onboarding_step(self, user_id: int) -> int:
@@ -162,7 +162,7 @@ class OnboardingManager:
         if self.use_postgres:
             cursor.execute(f"""
                 UPDATE user_preferences
-                SET onboarding_completed = TRUE,
+                SET onboarding_complete = TRUE,
                     onboarding_step = -1,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = {ph}
@@ -170,7 +170,7 @@ class OnboardingManager:
         else:
             cursor.execute(f"""
                 UPDATE user_preferences
-                SET onboarding_completed = 1,
+                SET onboarding_complete = 1,
                     onboarding_step = -1,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = {ph}
@@ -437,5 +437,5 @@ So... kya haal hai? How are you feeling today? 😊""",
             "summary_time": "22:00",
             "summary_enabled": True,
             "timezone": "Asia/Kolkata",
-            "onboarding_completed": False
+            "onboarding_complete": False
         }
