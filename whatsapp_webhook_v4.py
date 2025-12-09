@@ -27,7 +27,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 SCHEDULER_SECRET = os.getenv("SCHEDULER_SECRET")  # For GitHub Actions
 
 # Initialize components
-groq_client = Groq(api_key=GROQ_API_KEY, proxies=None)
+groq_client = Groq(api_key=GROQ_API_KEY)
 
 db = KhayalDatabase("khayal.db")
 mood_analyzer = MoodAnalyzer(groq_client)
