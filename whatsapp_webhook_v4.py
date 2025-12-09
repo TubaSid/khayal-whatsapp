@@ -26,15 +26,8 @@ WEBHOOK_VERIFY_TOKEN = os.getenv("WEBHOOK_VERIFY_TOKEN", "khayal_webhook_secret_
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 SCHEDULER_SECRET = os.getenv("SCHEDULER_SECRET")  # For GitHub Actions
 
-# Initialize components
-<<<<<<< HEAD
-# Explicitly set proxies to None to prevent the library from reading
-# the system proxy environment variables which cause the TypeError.
-groq_client = Groq(api_key=GROQ_API_KEY, proxies=None)
-=======
-groq_client = Groq(api_key=GROQ_API_KEY)
 
->>>>>>> e36b8d9cfa72819a14a4da831ac0981ed717804a
+groq_client = Groq(api_key=GROQ_API_KEY)
 db = KhayalDatabase("khayal.db")
 mood_analyzer = MoodAnalyzer(groq_client)
 semantic_memory = SemanticMemory(db, groq_client)
