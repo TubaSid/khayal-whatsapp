@@ -1,5 +1,5 @@
 # onboarding.py
-# User Onboarding & Preferences System (PostgreSQL Compatible)
+# User Onboarding & Preferences System (FIXED FOR POSTGRESQL)
 
 from typing import Dict, Optional
 from datetime import datetime, time
@@ -36,10 +36,9 @@ class OnboardingManager:
                     summary_time VARCHAR(10) DEFAULT '22:00',
                     summary_enabled BOOLEAN DEFAULT TRUE,
                     timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
-                    onboarding_completed BOOLEAN DEFAULT FALSE,
+                    onboarding_complete BOOLEAN DEFAULT FALSE,
                     onboarding_step INTEGER DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
         else:
@@ -49,12 +48,11 @@ class OnboardingManager:
                     name TEXT,
                     language_preference TEXT DEFAULT 'mixed',
                     summary_time TEXT DEFAULT '22:00',
-                    summary_enabled BOOLEAN DEFAULT 1,
+                    summary_enabled INTEGER DEFAULT 1,
                     timezone TEXT DEFAULT 'Asia/Kolkata',
-                    onboarding_completed BOOLEAN DEFAULT 0,
+                    onboarding_complete INTEGER DEFAULT 0,
                     onboarding_step INTEGER DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 )
             """)
@@ -135,18 +133,11 @@ class OnboardingManager:
         cursor = conn.cursor()
         
         ph = self._get_placeholder()
-        if self.use_postgres:
-            cursor.execute(f"""
-                UPDATE user_preferences
-                SET onboarding_step = {ph}
-                WHERE user_id = {ph}
-            """, (step, user_id))
-        else:
-            cursor.execute(f"""
-                UPDATE user_preferences
-                SET onboarding_step = {ph}
-                WHERE user_id = {ph}
-            """, (step, user_id))
+        cursor.execute(f"""
+            UPDATE user_preferences
+            SET onboarding_step = {ph}
+            WHERE user_id = {ph}
+        """, (step, user_id))
         
         conn.commit()
         conn.close()
@@ -391,18 +382,11 @@ So... kya haal hai? How are you feeling today? 😊""",
                 VALUES ({ph}, {ph})
             """, (user_id, value))
         else:
-            if self.use_postgres:
-                cursor.execute(f"""
-                    UPDATE user_preferences
-                    SET {key} = {ph}
-                    WHERE user_id = {ph}
-                """, (value, user_id))
-            else:
-                cursor.execute(f"""
-                    UPDATE user_preferences
-                    SET {key} = {ph}
-                    WHERE user_id = {ph}
-                """, (value, user_id))
+            cursor.execute(f"""
+                UPDATE user_preferences
+                SET {key} = {ph}
+                WHERE user_id = {ph}
+            """, (value, user_id))
         
         conn.commit()
         conn.close()
