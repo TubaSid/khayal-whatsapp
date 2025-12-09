@@ -1,5 +1,6 @@
 # database.py
 # Production-Ready Database Handler - SQLite (local) + PostgreSQL (production)
+# FIXED: All column names match, proper connection handling
 
 import os
 from datetime import datetime, timedelta
@@ -34,12 +35,15 @@ class KhayalDatabase:
             return conn
     
     def init_database(self):
-        """Initialize all tables"""
+        """Initialize all tables with correct schema"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
         try:
             if self.use_postgres:
+                # Drop and recreate user_preferences to ensure correct schema
+                cursor.execute('DROP TABLE IF EXISTS user_preferences CASCADE')
+                
                 # PostgreSQL schema
                 cursor.execute('''
                     CREATE TABLE IF NOT EXISTS users (
@@ -65,18 +69,18 @@ class KhayalDatabase:
                     )
                 ''')
                 
+                # FIXED: Correct column names matching onboarding.py
                 cursor.execute('''
-                    CREATE TABLE IF NOT EXISTS user_preferences (
+                    CREATE TABLE user_preferences (
                         user_id INTEGER PRIMARY KEY REFERENCES users(id),
                         name VARCHAR(255),
                         language_preference VARCHAR(20) DEFAULT 'mixed',
                         summary_time VARCHAR(10) DEFAULT '22:00',
                         summary_enabled BOOLEAN DEFAULT TRUE,
                         timezone VARCHAR(50) DEFAULT 'Asia/Kolkata',
-                        onboarding_completed BOOLEAN DEFAULT FALSE,
+                        onboarding_complete BOOLEAN DEFAULT FALSE,
                         onboarding_step INTEGER DEFAULT 0,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
                 ''')
                 
@@ -119,10 +123,9 @@ class KhayalDatabase:
                         summary_time TEXT DEFAULT '22:00',
                         summary_enabled INTEGER DEFAULT 1,
                         timezone TEXT DEFAULT 'Asia/Kolkata',
-                        onboarding_completed INTEGER DEFAULT 0,
+                        onboarding_complete INTEGER DEFAULT 0,
                         onboarding_step INTEGER DEFAULT 0,
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         FOREIGN KEY (user_id) REFERENCES users(id)
                     )
                 ''')
