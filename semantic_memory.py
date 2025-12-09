@@ -3,6 +3,7 @@
 # Pattern detection, trend analysis, and semantic search
 
 import json
+import sys
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 from collections import Counter, defaultdict
@@ -30,33 +31,44 @@ class SemanticMemory:
     def detect_patterns(self, user_id: int, days: int = 7) -> Dict:
         """
         Detect emotional and thematic patterns
-        
-        Returns:
-            {
-                "recurring_themes": List[str],
-                "dominant_mood": str,
-                "mood_trend": str,  # improving/stable/declining
-                "stress_triggers": List[str],
-                "needs_attention": bool,
-                "pattern_summary": str
-            }
         """
         
         # Get recent messages
-        cursor = self.db.conn.cursor()
-        since_date = (datetime.now() - timedelta(days=days)).date()
+        # 🚨 FIX 1: Use the public getter method
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            SELECT mood, intensity, themes, timestamp
-            FROM messages
-            WHERE user_id = ?
-            AND message_type = 'user'
-            AND date(timestamp) >= ?
-            AND mood IS NOT NULL
-            ORDER BY timestamp ASC
-        """, (user_id, since_date))
+        since_date_date = (datetime.now() - timedelta(days=days)).date()
+        since_date_dt = datetime.now() - timedelta(days=days) # For PostgreSQL comparison
         
-        messages = cursor.fetchall()
+        try:
+            if self.db.use_postgres:
+                cursor.execute("""
+                    SELECT mood, intensity, themes, timestamp
+                    FROM messages
+                    WHERE user_id = %s
+                    AND is_user = TRUE -- Corrected from message_type
+                    AND timestamp >= %s -- Corrected date function for PG
+                    AND mood IS NOT NULL
+                    ORDER BY timestamp ASC
+                """, (user_id, since_date_dt))
+            else:
+                cursor.execute("""
+                    SELECT mood, intensity, themes, timestamp
+                    FROM messages
+                    WHERE user_id = ?
+                    AND is_user = 1 -- Corrected from message_type
+                    AND date(timestamp) >= ?
+                    AND mood IS NOT NULL
+                    ORDER BY timestamp ASC
+                """, (user_id, since_date_date))
+        
+            messages = cursor.fetchall()
+            
+        except Exception as e:
+            conn.rollback()
+            print(f"DB Error in detect_patterns: {e}", file=sys.stderr)
+            raise
         
         if not messages:
             return self._get_empty_pattern()
@@ -68,12 +80,16 @@ class SemanticMemory:
         
         for msg in messages:
             if msg['themes']:
-                themes = json.loads(msg['themes'])
-                all_themes.extend(themes)
+                # Ensure the theme data is valid JSON before loading
+                try:
+                    themes = json.loads(msg['themes'])
+                    all_themes.extend(themes)
+                except (json.JSONDecodeError, TypeError):
+                    print(f"Warning: Failed to decode themes for message: {msg['themes']}")
         
         # Dominant mood
         mood_counts = Counter(moods)
-        dominant_mood = mood_counts.most_common(1)[0][0]
+        dominant_mood = mood_counts.most_common(1)[0][0] if mood_counts else "neutral"
         
         # Recurring themes
         theme_counts = Counter(all_themes)
@@ -137,8 +153,11 @@ class SemanticMemory:
         for msg in messages:
             if msg['mood'] in negative_moods and msg['intensity'] >= 7:
                 if msg['themes']:
-                    themes = json.loads(msg['themes'])
-                    triggers.extend(themes)
+                    try:
+                        themes = json.loads(msg['themes'])
+                        triggers.extend(themes)
+                    except (json.JSONDecodeError, TypeError):
+                        pass
         
         # Return top 3 most common triggers
         trigger_counts = Counter(triggers)
@@ -158,7 +177,7 @@ class SemanticMemory:
         # Count recent negative high-intensity messages
         high_negative_count = sum(
             1 for msg in recent_messages
-            if msg['mood'] in negative_moods and msg['intensity'] >= 7
+            if msg['mood'] in negative_moods and msg['intensity'] is not None and msg['intensity'] >= 7
         )
         
         # Check if last 3+ messages are negative
@@ -176,9 +195,11 @@ class SemanticMemory:
         
         # Check average intensity of last 5
         if len(intensities) >= 5:
-            recent_avg = sum(intensities[-5:]) / 5
-            if recent_avg >= 7:
-                return True
+            recent_intensities = [i for i in intensities[-5:] if i is not None]
+            if recent_intensities:
+                recent_avg = sum(recent_intensities) / len(recent_intensities)
+                if recent_avg >= 7:
+                    return True
         
         return False
     
@@ -240,30 +261,40 @@ class SemanticMemory:
     ) -> List[Dict]:
         """
         Find past conversations similar to current query
-        
-        Args:
-            query: Current message or topic to search for
-            user_id: User ID
-            limit: Number of similar conversations to return
-        
-        Returns:
-            List of similar message dictionaries
         """
         
         # Get all past user messages
-        cursor = self.db.conn.cursor()
+        # 🚨 FIX 1: Use the public getter method
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            SELECT content, mood, intensity, themes, timestamp
-            FROM messages
-            WHERE user_id = ?
-            AND message_type = 'user'
-            ORDER BY timestamp DESC
-            LIMIT 50
-        """, (user_id,))
+        try:
+            if self.db.use_postgres:
+                cursor.execute("""
+                    SELECT content, mood, intensity, themes, timestamp
+                    FROM messages
+                    WHERE user_id = %s
+                    AND is_user = TRUE -- Corrected from message_type
+                    ORDER BY timestamp DESC
+                    LIMIT %s
+                """, (user_id, limit * 10)) # Increased limit to 50
+            else:
+                cursor.execute("""
+                    SELECT content, mood, intensity, themes, timestamp
+                    FROM messages
+                    WHERE user_id = ?
+                    AND is_user = 1 -- Corrected from message_type
+                    ORDER BY timestamp DESC
+                    LIMIT ?
+                """, (user_id, limit * 10))
         
-        past_messages = [dict(row) for row in cursor.fetchall()]
+            past_messages = [dict(row) for row in cursor.fetchall()]
         
+        except Exception as e:
+            conn.rollback()
+            print(f"DB Error in find_similar_conversations: {e}", file=sys.stderr)
+            raise
+
         if not past_messages:
             return []
         
@@ -359,13 +390,15 @@ Return ONLY the JSON array, nothing else."""
         
         context_parts = []
         
-        # Recent conversation
+        # Recent conversation (self.db.get_recent_messages already handles connection)
         recent = self.db.get_recent_messages(user_id, limit=3)
         if recent:
             context_parts.append("Recent conversation:")
             for msg in recent:
-                role = "User" if msg['message_type'] == 'user' else "Khayal"
-                context_parts.append(f"  {role}: {msg['content']}")
+                # 🚨 FIX 4: Corrected role assignment from message_type to is_user
+                role = "User" if (self.db.use_postgres and msg.get('is_user', True) is True) or (not self.db.use_postgres and msg.get('is_user', 1) == 1) else "Khayal"
+                content = msg.get('content', '...')
+                context_parts.append(f"  {role}: {content}")
         
         # Patterns
         patterns = self.detect_patterns(user_id, days=7)
@@ -381,8 +414,10 @@ Return ONLY the JSON array, nothing else."""
         if similar:
             context_parts.append("\nRelated past conversations:")
             for msg in similar:
-                timestamp = msg['timestamp']
-                context_parts.append(f"  - \"{msg['content']}\" ({msg['mood']})")
+                # timestamp is available but commented out for brevity
+                content = msg.get('content', '...')
+                mood = msg.get('mood', 'unknown')
+                context_parts.append(f"  - \"{content}\" ({mood})")
         
         return "\n".join(context_parts)
     
@@ -393,21 +428,43 @@ Return ONLY the JSON array, nothing else."""
     def get_mood_trend_chart(self, user_id: int, days: int = 7) -> Dict:
         """Get mood trend data for visualization"""
         
-        cursor = self.db.conn.cursor()
-        since_date = (datetime.now() - timedelta(days=days)).date()
+        # 🚨 FIX 1: Use the public getter method
+        conn = self.db.get_connection()
+        cursor = conn.cursor()
         
-        cursor.execute("""
-            SELECT date(timestamp) as date, AVG(intensity) as avg_intensity, mood
-            FROM messages
-            WHERE user_id = ?
-            AND message_type = 'user'
-            AND date(timestamp) >= ?
-            AND mood IS NOT NULL
-            GROUP BY date(timestamp)
-            ORDER BY date(timestamp) ASC
-        """, (user_id, since_date))
+        since_date_date = (datetime.now() - timedelta(days=days)).date()
+        since_date_dt = datetime.now() - timedelta(days=days) # For PostgreSQL comparison
         
-        trend_data = [dict(row) for row in cursor.fetchall()]
+        try:
+            if self.db.use_postgres:
+                cursor.execute("""
+                    SELECT DATE(timestamp) as date, AVG(intensity) as avg_intensity, mood
+                    FROM messages
+                    WHERE user_id = %s
+                    AND is_user = TRUE -- Corrected from message_type
+                    AND timestamp >= %s -- Corrected date function for PG
+                    AND mood IS NOT NULL
+                    GROUP BY DATE(timestamp)
+                    ORDER BY DATE(timestamp) ASC
+                """, (user_id, since_date_dt))
+            else:
+                cursor.execute("""
+                    SELECT date(timestamp) as date, AVG(intensity) as avg_intensity, mood
+                    FROM messages
+                    WHERE user_id = ?
+                    AND is_user = 1 -- Corrected from message_type
+                    AND date(timestamp) >= ?
+                    AND mood IS NOT NULL
+                    GROUP BY date(timestamp)
+                    ORDER BY date(timestamp) ASC
+                """, (user_id, since_date_date))
+        
+            trend_data = [dict(row) for row in cursor.fetchall()]
+
+        except Exception as e:
+            conn.rollback()
+            print(f"DB Error in get_mood_trend_chart: {e}", file=sys.stderr)
+            raise
         
         return {
             "trend_data": trend_data,
@@ -503,4 +560,5 @@ if __name__ == "__main__":
     print("✅ Semantic memory testing complete!")
     print("="*60)
     
-    db.close()
+    # 🚨 FIX 5: db.close() does not exist, remove the call
+    # db.close()
