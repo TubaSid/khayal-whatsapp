@@ -138,15 +138,13 @@ class OnboardingManager:
         if self.use_postgres:
             cursor.execute(f"""
                 UPDATE user_preferences
-                SET onboarding_step = {ph},
-                    updated_at = CURRENT_TIMESTAMP
+                SET onboarding_step = {ph}
                 WHERE user_id = {ph}
             """, (step, user_id))
         else:
             cursor.execute(f"""
                 UPDATE user_preferences
-                SET onboarding_step = {ph},
-                    updated_at = CURRENT_TIMESTAMP
+                SET onboarding_step = {ph}
                 WHERE user_id = {ph}
             """, (step, user_id))
         
@@ -163,16 +161,14 @@ class OnboardingManager:
             cursor.execute(f"""
                 UPDATE user_preferences
                 SET onboarding_complete = TRUE,
-                    onboarding_step = -1,
-                    updated_at = CURRENT_TIMESTAMP
+                    onboarding_step = -1
                 WHERE user_id = {ph}
             """, (user_id,))
         else:
             cursor.execute(f"""
                 UPDATE user_preferences
                 SET onboarding_complete = 1,
-                    onboarding_step = -1,
-                    updated_at = CURRENT_TIMESTAMP
+                    onboarding_step = -1
                 WHERE user_id = {ph}
             """, (user_id,))
         
@@ -398,15 +394,13 @@ So... kya haal hai? How are you feeling today? 😊""",
             if self.use_postgres:
                 cursor.execute(f"""
                     UPDATE user_preferences
-                    SET {key} = {ph},
-                        updated_at = CURRENT_TIMESTAMP
+                    SET {key} = {ph}
                     WHERE user_id = {ph}
                 """, (value, user_id))
             else:
                 cursor.execute(f"""
                     UPDATE user_preferences
-                    SET {key} = {ph},
-                        updated_at = CURRENT_TIMESTAMP
+                    SET {key} = {ph}
                     WHERE user_id = {ph}
                 """, (value, user_id))
         
