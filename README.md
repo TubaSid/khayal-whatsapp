@@ -1,27 +1,26 @@
-# 🌙 Khayal - WhatsApp Companion for Emotional Support
+# Khayal - WhatsApp Companion for Emotional Support
 
 A warm, empathetic WhatsApp bot that journals with people, provides emotional support, and detects mental health crises with cultural sensitivity.
 
 ---
 
-## 📚 **IMPORTANT: Restructured Architecture (v4.0.0)**
+## IMPORTANT: Restructured Architecture (v4.0.0)
 
-**This codebase has been restructured into a professional, modular Python package!**
+This codebase has been restructured into a professional, modular Python package.
 
-### 👉 **Start Here:**
+### Start Here:
 - **[START_HERE.md](START_HERE.md)** - Quick overview (5 min)
 - **[QUICKSTART.md](QUICKSTART.md)** - Setup guide (5 min)
 - **[IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)** - Code examples (3 min)
 - **[DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)** - Complete guide index
 
-### 🎯 **Quick Links by Role:**
+### Quick Links by Role:
 - **Project Manager**: [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)
-- **Developer**: [QUICKSTART.md](QUICKSTART.md) → [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)
+- **Developer**: [QUICKSTART.md](QUICKSTART.md) / [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)
 - **Architect**: [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)
-- **QA/Testing**: [QUICKSTART.md](QUICKSTART.md) → [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)
+- **QA/Testing**: [QUICKSTART.md](QUICKSTART.md) / [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)
 
-### 📊 **What Changed:**
-See [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md) for detailed comparison.
+For more details, see [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md).
 
 ---
 
@@ -300,15 +299,11 @@ Key guidelines:
 - Include type hints for clarity
 - Write descriptive commit messages
 
-## License
-
-(Add your license here)
-
 ## Contact
 
 - GitHub: [@TubaSid](https://github.com/TubaSid)
-- Email: (add email if public)
+- Email: tubaasid@gmail.com
 
 ---
 
-**Made with ❤️ for mental health support and emotional wellbeing**
+Made with care for mental health support and emotional wellbeing
