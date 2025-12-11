@@ -300,8 +300,6 @@ Key guidelines:
 - Write descriptive commit messages
 
 ## Contact
-
-- GitHub: [@TubaSid](https://github.com/TubaSid)
 - Email: tubaasid@gmail.com
 
 ---

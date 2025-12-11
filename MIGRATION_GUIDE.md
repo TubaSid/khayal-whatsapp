@@ -90,7 +90,7 @@ Each module wraps the original implementation for backward compatibility.
 
 ## Key Changes from Old Structure
 
-### ✅ Benefits of Restructuring
+### Benefits of Restructuring
 
 1. **Modularity**: Each module has a single responsibility
 2. **Testability**: Individual components can be tested in isolation
@@ -99,7 +99,7 @@ Each module wraps the original implementation for backward compatibility.
 5. **Configuration Management**: Centralized config for different environments
 6. **Factory Pattern**: Flask app can be created for testing or different contexts
 
-### ⚠️ Backward Compatibility
+### Backward Compatibility
 
 Original module files (`crisis_detector.py`, `mood_analyzer.py`, etc.) are still present. New core modules wrap these for compatibility. You can gradually migrate them.
 

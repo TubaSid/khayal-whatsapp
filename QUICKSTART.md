@@ -168,13 +168,13 @@ curl http://localhost:5000/health
 
 | Variable | Purpose | Required |
 |----------|---------|----------|
-| `PHONE_NUMBER_ID` | WhatsApp phone ID | ✅ Yes |
-| `WHATSAPP_ACCESS_TOKEN` | WhatsApp API token | ✅ Yes |
-| `GROQ_API_KEY` | Groq AI API key | ✅ Yes |
-| `WEBHOOK_VERIFY_TOKEN` | Webhook validation token | ⚠️ Optional (default provided) |
-| `SCHEDULER_SECRET` | Secret for scheduler endpoint | ✅ Yes (for summaries) |
-| `DATABASE_URL` | PostgreSQL connection string | ⚠️ Optional (uses SQLite if not set) |
-| `PORT` | Server port | ⚠️ Optional (default: 5000) |
+| `PHONE_NUMBER_ID` | WhatsApp phone ID | [Required] |
+| `WHATSAPP_ACCESS_TOKEN` | WhatsApp API token | [Required] |
+| `GROQ_API_KEY` | Groq AI API key | [Required] |
+| `WEBHOOK_VERIFY_TOKEN` | Webhook validation token | [Optional] |
+| `SCHEDULER_SECRET` | Secret for scheduler endpoint | [Required] |
+| `DATABASE_URL` | PostgreSQL connection string | [Optional] |
+| `PORT` | Server port | [Optional] |
 
 ## Debugging
 

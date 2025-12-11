@@ -200,20 +200,20 @@ def test_mood_analyzer():
 
 ## Common Mistakes to Avoid
 
-1. ❌ **Don't import at module level from whatsapp_webhook_v4.py**
-   - ✅ Use the structured imports: `from khayal.database import KhayalDatabase`
+1. [NOT] **Don't import at module level from whatsapp_webhook_v4.py**
+   - [OK] Use the structured imports: `from khayal.database import KhayalDatabase`
 
-2. ❌ **Don't hardcode configuration values**
-   - ✅ Use `from khayal.config import get_config`
+2. [NOT] **Don't hardcode configuration values**
+   - [OK] Use `from khayal.config import get_config`
 
-3. ❌ **Don't use print() for logging in routes**
-   - ✅ Use `from khayal.utils.logger import get_logger`
+3. [NOT] **Don't use print() for logging in routes**
+   - [OK] Use `from khayal.utils.logger import get_logger`
 
-4. ❌ **Don't put database queries in route handlers**
-   - ✅ Create helper functions in core/ modules
+4. [NOT] **Don't put database queries in route handlers**
+   - [OK] Create helper functions in core/ modules
 
-5. ❌ **Don't modify database.py directly**
-   - ✅ Use `khayal.database.models` instead
+5. [NOT] **Don't modify database.py directly**
+   - [OK] Use `khayal.database.models` instead
 
 ## Getting Help
 
@@ -224,13 +224,13 @@ def test_mood_analyzer():
 
 ## Next Steps
 
-1. ✅ Move crisis detection to `khayal/core/crisis.py`
-2. ✅ Move semantic memory to `khayal/core/memory.py`  
-3. ✅ Move onboarding to `khayal/core/onboarding.py`
-4. 🔲 Add unit tests
-5. 🔲 Add API documentation (Swagger)
-6. 🔲 Implement database migrations
+1. [OK] Move crisis detection to `khayal/core/crisis.py`
+2. [OK] Move semantic memory to `khayal/core/memory.py`  
+3. [OK] Move onboarding to `khayal/core/onboarding.py`
+4. [TODO] Add unit tests
+5. [TODO] Add API documentation (Swagger)
+6. [TODO] Implement database migrations
 
 ---
 
-**Happy coding! 🚀**
+**Happy coding!**
