@@ -84,7 +84,7 @@ class OnboardingManager:
         
         ph = self._get_placeholder()
         cursor.execute(f"""
-            SELECT onboarding_complete
+            SELECT onboarding_complete, onboarding_step
             FROM user_preferences
             WHERE user_id = {ph}
         """, (user_id,))
@@ -95,8 +95,12 @@ class OnboardingManager:
         if result is None:
             return False
         
+        # Check both onboarding_complete flag AND step = -1
         completed = result['onboarding_complete'] if self.use_postgres else result[0]
-        return bool(completed) if completed is not None else False
+        step = result['onboarding_step'] if self.use_postgres else result[1]
+        
+        # Double-check: complete flag should be True AND step should be -1
+        return bool(completed) and step == -1
     
     def get_onboarding_step(self, user_id: int) -> int:
         """Get current onboarding step"""
@@ -105,7 +109,7 @@ class OnboardingManager:
         
         ph = self._get_placeholder()
         cursor.execute(f"""
-            SELECT onboarding_step
+            SELECT onboarding_step, onboarding_complete
             FROM user_preferences
             WHERE user_id = {ph}
         """, (user_id,))
@@ -113,18 +117,29 @@ class OnboardingManager:
         result = cursor.fetchone()
         
         if result:
+            # If onboarding is complete, always return -1
+            complete = result['onboarding_complete'] if self.use_postgres else result[1]
+            if complete:
+                conn.close()
+                return -1
+            
+            # Otherwise return the step
             step = result['onboarding_step'] if self.use_postgres else result[0]
             conn.close()
             return step
         
-        # Create preferences record
-        cursor.execute(f"""
-            INSERT INTO user_preferences (user_id, onboarding_step)
-            VALUES ({ph}, {ph})
-        """, (user_id, 0))
-        conn.commit()
-        conn.close()
+        # Create preferences record only if doesn't exist
+        try:
+            cursor.execute(f"""
+                INSERT INTO user_preferences (user_id, onboarding_step, onboarding_complete)
+                VALUES ({ph}, 0, {'FALSE' if self.use_postgres else '0'})
+            """, (user_id,))
+            conn.commit()
+        except:
+            # Already exists, ignore
+            pass
         
+        conn.close()
         return 0
     
     def set_onboarding_step(self, user_id: int, step: int):

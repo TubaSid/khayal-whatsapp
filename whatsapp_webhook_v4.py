@@ -1,12 +1,15 @@
 # whatsapp_webhook_v4.py
 # PRODUCTION WEBHOOK - Complete Khayal System (Render-Ready)
-# Includes: Crisis Detection + Onboarding + All Features + Scheduler Endpoint
+# Includes: Crisis Detection + Onboarding + Debouncing + Scheduler Endpoint
 
 from flask import Flask, request, jsonify
 import requests
 import os
 import json
+import threading
+import time
 from datetime import datetime
+from collections import defaultdict
 from dotenv import load_dotenv
 
 # Import all modules
@@ -24,9 +27,9 @@ PHONE_NUMBER_ID = os.getenv("PHONE_NUMBER_ID")
 WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN")
 WEBHOOK_VERIFY_TOKEN = os.getenv("WEBHOOK_VERIFY_TOKEN", "khayal_webhook_secret_2025")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-SCHEDULER_SECRET = os.getenv("SCHEDULER_SECRET")  # For GitHub Actions
+SCHEDULER_SECRET = os.getenv("SCHEDULER_SECRET")
 
-
+# Initialize components
 groq_client = Groq(api_key=GROQ_API_KEY)
 db = KhayalDatabase("khayal.db")
 mood_analyzer = MoodAnalyzer(groq_client)
@@ -34,7 +37,13 @@ semantic_memory = SemanticMemory(db, groq_client)
 crisis_detector = CrisisDetector(groq_client)
 onboarding_manager = OnboardingManager(db)
 
-# Khayal personality (updated for production)
+# Message queue system for debouncing
+user_message_queues = defaultdict(list)
+user_timers = {}
+timer_lock = threading.Lock()
+DEBOUNCE_DELAY = 4  # Wait 4 seconds after last message
+
+# Khayal personality
 KHAYAL_SYSTEM_INSTRUCTION = """You are Khayal (خیال) - a warm, empathetic desi companion who journals with people.
 
 PERSONALITY:
@@ -126,7 +135,139 @@ def mark_message_as_read(message_id: str):
         pass
 
 # ============================================
-# KHAYAL RESPONSE GENERATOR (v4 - Production)
+# MESSAGE DEBOUNCING SYSTEM
+# ============================================
+
+def process_queued_messages(user_id: int, from_number: str):
+    """Process all queued messages for a user after debounce delay"""
+    
+    time.sleep(DEBOUNCE_DELAY)
+    
+    with timer_lock:
+        # Check if this is still the active timer
+        if user_timers.get(user_id) != threading.current_thread():
+            return  # Another timer has taken over
+        
+        # Get all queued messages
+        messages = user_message_queues[user_id]
+        if not messages:
+            return
+        
+        # Combine messages
+        combined_message = " ".join(messages)
+        print(f"📦 Processing combined message: {combined_message}")
+        
+        # Clear queue
+        user_message_queues[user_id] = []
+        user_timers[user_id] = None
+    
+    # NOW process the combined message through normal flow
+    try:
+        # Check onboarding
+        onboarding_complete = onboarding_manager.is_onboarding_complete(user_id)
+        current_step = onboarding_manager.get_onboarding_step(user_id)
+        
+        print(f"\n👋 Processing for user {user_id}:")
+        print(f"   Onboarding complete: {onboarding_complete}")
+        print(f"   Current step: {current_step}")
+        
+        if not onboarding_complete:
+            # Process onboarding with COMBINED message
+            result = onboarding_manager.process_onboarding_response(
+                user_id,
+                current_step,
+                combined_message
+            )
+            send_whatsapp_message(from_number, result["message"])
+            print(f"✅ Onboarding message sent (step {current_step} → {result['next_step']})")
+            return
+        
+        print(f"   → Normal flow")
+        
+        # Crisis detection
+        crisis_data = crisis_detector.detect_crisis(combined_message)
+        
+        if crisis_data['should_escalate']:
+            print(f"⚠️  CRISIS DETECTED: {crisis_data['crisis_type']}")
+            crisis_response = crisis_detector.get_crisis_response(
+                crisis_data['crisis_type'],
+                "IN"
+            )
+            send_whatsapp_message(from_number, crisis_response["message"])
+            db.store_user_message(
+                user_id=user_id,
+                content=combined_message,
+                mood="crisis",
+                intensity=10,
+                themes=["crisis", crisis_data['crisis_type']],
+                needs_support=True
+            )
+            print(f"✅ Crisis resources sent")
+            return
+        
+        # Mood analysis
+        print(f"🧠 Analyzing mood...")
+        mood_data = mood_analyzer.analyze(combined_message)
+        print(f"  Mood: {mood_data['mood']} ({mood_data['intensity']}/10)")
+        
+        # Detect patterns
+        print(f"📊 Detecting patterns...")
+        patterns = semantic_memory.detect_patterns(user_id, days=7)
+        
+        # Store message
+        db.store_user_message(
+            user_id=user_id,
+            content=combined_message,
+            mood=mood_data['mood'],
+            intensity=mood_data['intensity'],
+            themes=mood_data['themes'],
+            needs_support=mood_data['needs_support']
+        )
+        
+        # Generate response
+        print(f"🤔 Generating response...")
+        khayal_response = get_khayal_response(
+            user_id=user_id,
+            user_message=combined_message,
+            mood_data=mood_data,
+            crisis_data=crisis_data if crisis_data['is_crisis'] else None
+        )
+        
+        # Store and send
+        db.store_khayal_message(user_id, khayal_response)
+        send_whatsapp_message(from_number, khayal_response)
+        print(f"✅ Response sent: {khayal_response[:50]}...")
+        
+    except Exception as e:
+        print(f"❌ Error processing queued messages: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+def queue_message(user_id: int, from_number: str, message: str):
+    """Add message to queue and start/reset debounce timer"""
+    
+    with timer_lock:
+        # Add message to queue
+        user_message_queues[user_id].append(message)
+        print(f"📥 Queued message {len(user_message_queues[user_id])}: {message}")
+        
+        # Cancel existing timer if any
+        if user_id in user_timers and user_timers[user_id]:
+            print(f"⏱️  Resetting timer for user {user_id}")
+        
+        # Start new timer
+        timer = threading.Thread(
+            target=process_queued_messages,
+            args=(user_id, from_number),
+            daemon=True
+        )
+        user_timers[user_id] = timer
+        timer.start()
+        print(f"⏱️  Started {DEBOUNCE_DELAY}s debounce timer")
+
+# ============================================
+# KHAYAL RESPONSE GENERATOR
 # ============================================
 
 def get_khayal_response(
@@ -231,7 +372,7 @@ def verify_webhook():
         return "Verification failed", 403
 
 def handle_incoming_message():
-    """Handle incoming WhatsApp messages - PRODUCTION VERSION"""
+    """Handle incoming WhatsApp messages - WITH DEBOUNCING"""
     try:
         data = request.json
         
@@ -274,111 +415,8 @@ def handle_incoming_message():
             # Get or create user
             user_id = db.get_or_create_user(from_number)
             
-            # ============================================
-            # STEP 1: CHECK IF ONBOARDING NEEDED
-            # ============================================
-            
-            onboarding_complete = onboarding_manager.is_onboarding_complete(user_id)
-            current_step = onboarding_manager.get_onboarding_step(user_id)
-            
-            print(f"\n👋 Onboarding check:")
-            print(f"   User ID: {user_id}")
-            print(f"   Complete: {onboarding_complete}")
-            print(f"   Current step: {current_step}")
-            
-            # Check if user is in onboarding flow
-            if not onboarding_complete:
-                print(f"   → User in onboarding")
-                
-                # Process their message through onboarding
-                result = onboarding_manager.process_onboarding_response(
-                    user_id,
-                    current_step,
-                    user_message
-                )
-                
-                print(f"   → Processed: step {current_step} → {result['next_step']}")
-                print(f"\n📤 Sending: {result['message'][:100]}...")
-                
-                send_whatsapp_message(from_number, result["message"])
-                print(f"✅ Onboarding message sent")
-                
-                return "EVENT_RECEIVED", 200
-            
-            # User has completed onboarding - continue with normal flow
-            print(f"   → User onboarded, normal flow")
-            
-            # ============================================
-            # STEP 2: CRISIS DETECTION (Safety First!)
-            # ============================================
-            
-            print(f"\n🚨 Checking for crisis...")
-            crisis_data = crisis_detector.detect_crisis(user_message)
-            
-            if crisis_data['should_escalate']:
-                print(f"⚠️  CRISIS DETECTED: {crisis_data['crisis_type']} (severity: {crisis_data['severity']})")
-                
-                # Send crisis resources immediately
-                crisis_response = crisis_detector.get_crisis_response(
-                    crisis_data['crisis_type'],
-                    "IN"  # TODO: Detect user's country
-                )
-                
-                send_whatsapp_message(from_number, crisis_response["message"])
-                
-                # Log crisis in database
-                db.store_user_message(
-                    user_id=user_id,
-                    content=user_message,
-                    mood="crisis",
-                    intensity=10,
-                    themes=["crisis", crisis_data['crisis_type']],
-                    needs_support=True
-                )
-                
-                print(f"✅ Crisis resources sent")
-                return "EVENT_RECEIVED", 200
-            
-            # ============================================
-            # STEP 3: NORMAL FLOW (Mood + Response)
-            # ============================================
-            
-            # Analyze mood
-            print(f"\n🧠 Analyzing mood...")
-            mood_data = mood_analyzer.analyze(user_message)
-            print(f"  Mood: {mood_data['mood']} ({mood_data['intensity']}/10)")
-            
-            # Detect patterns
-            print(f"\n📊 Detecting patterns...")
-            patterns = semantic_memory.detect_patterns(user_id, days=7)
-            if patterns['needs_attention']:
-                print(f"  ⚠️  User needs extra attention")
-            
-            # Store user message
-            db.store_user_message(
-                user_id=user_id,
-                content=user_message,
-                mood=mood_data['mood'],
-                intensity=mood_data['intensity'],
-                themes=mood_data['themes'],
-                needs_support=mood_data['needs_support']
-            )
-            
-            # Generate response
-            print(f"\n🤔 Generating response...")
-            khayal_response = get_khayal_response(
-                user_id=user_id,
-                user_message=user_message,
-                mood_data=mood_data,
-                crisis_data=crisis_data if crisis_data['is_crisis'] else None
-            )
-            
-            # Store Khayal's response
-            db.store_khayal_message(user_id, khayal_response)
-            
-            # Send response
-            send_whatsapp_message(from_number, khayal_response)
-            print(f"✅ Response sent")
+            # QUEUE MESSAGE - Don't process immediately!
+            queue_message(user_id, from_number, user_message)
             
         else:
             print(f"⚠️  Unsupported message type: {message_type}")
@@ -459,7 +497,8 @@ def health_check():
             "mood_analysis",
             "pattern_detection",
             "semantic_memory",
-            "daily_summaries"
+            "daily_summaries",
+            "message_debouncing"
         ],
         "timestamp": datetime.now().isoformat()
     }), 200
@@ -495,6 +534,7 @@ def home():
         <li>✅ Mood analysis</li>
         <li>✅ Pattern detection</li>
         <li>✅ Semantic memory</li>
+        <li>✅ Message debouncing (4s delay)</li>
         <li>✅ Daily 10 PM summaries (via GitHub Actions)</li>
     </ul>
     <p><strong>Endpoints:</strong></p>
@@ -520,6 +560,7 @@ if __name__ == "__main__":
     print(f"Database: ✅ Connected")
     print(f"Crisis Detector: ✅ Ready")
     print(f"Onboarding: ✅ Ready")
+    print(f"Debounce Delay: {DEBOUNCE_DELAY}s")
     print("="*60)
     
     print("\n🚀 Features Active:")
@@ -528,6 +569,7 @@ if __name__ == "__main__":
     print("  • Mood analysis & tracking")
     print("  • Pattern detection")
     print("  • Semantic memory")
+    print("  • Message debouncing (wait for complete thought)")
     print("  • Daily summaries (GitHub Actions)")
     print("="*60 + "\n")
     
