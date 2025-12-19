@@ -38,7 +38,7 @@
 | Document | Purpose | Audience | Time |
 |----------|---------|----------|------|
 | [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) | What was completed | Project Managers | 5 min |
-| [RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md) | Summary of changes | Managers | 5 min |
+| [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md) | Summary of changes (archived) | Managers | 5 min |
 
 ---
 
@@ -59,16 +59,13 @@
 
 ### ✅ Completion & Verification
 - **[VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)** - Detailed checklist of completion
-- **[RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md)** - Summary of restructuring
-- **[RESTRUCTURING_GUIDE.md](RESTRUCTURING_GUIDE.md)** - Restructuring steps taken
-- **[RESTRUCTURING_SUMMARY.md](RESTRUCTURING_SUMMARY.md)** - Summary document
- - **[RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md)** - Summary of restructuring (archived)
- - **[RESTRUCTURING_GUIDE.md](docs/archived/RESTRUCTURING_GUIDE.md)** - Restructuring steps taken (archived)
- - **[RESTRUCTURING_SUMMARY.md](docs/archived/RESTRUCTURING_SUMMARY.md)** - Summary document (archived)
+- **[RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md)** - Summary of restructuring (archived)
+- **[RESTRUCTURING_GUIDE.md](docs/archived/RESTRUCTURING_GUIDE.md)** - Restructuring steps taken (archived)
+- **[RESTRUCTURING_SUMMARY.md](docs/archived/RESTRUCTURING_SUMMARY.md)** - Summary document (archived)
 
 ### 📝 Additional References
 - **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Developer guidelines
-- **[COMPLETION_CHECKLIST.md](COMPLETION_CHECKLIST.md)** - Project completion checklist
+- **[COMPLETION_CHECKLIST.md](docs/archived/COMPLETION_CHECKLIST.md)** - Project completion checklist (archived)
 
 ---
 
@@ -152,7 +149,7 @@
 → [QUICKSTART.md](QUICKSTART.md) → Common Tasks section
 
 ### "What was restructured?"
-→ [RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md)
+→ [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md)
 
 ### "What was completed?"
 → [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md)
