@@ -221,6 +221,7 @@ messages
 
 ### Documentation cleanup
 To keep the project top-level tidy, redundant restructuring documents have been archived to `docs/archived/` and removed from the repository root. If you need historical migration notes or one-off artifacts, you'll find them in that directory.
+If you'd like to contribute, please see the contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).
 user_preferences
 ├── user_id (PK, FK → users)
 ├── language_preference

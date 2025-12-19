@@ -11,6 +11,9 @@
 ### Need Code Examples?
 👉 **Check [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)** - Copy-paste imports (3 min)
 
+### Want to contribute?
+👉 **Read [CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (2 min)
+
 ---
 
 ## 📖 Documentation Guide
