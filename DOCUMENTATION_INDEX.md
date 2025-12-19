@@ -59,6 +59,9 @@
 - **[RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md)** - Summary of restructuring
 - **[RESTRUCTURING_GUIDE.md](RESTRUCTURING_GUIDE.md)** - Restructuring steps taken
 - **[RESTRUCTURING_SUMMARY.md](RESTRUCTURING_SUMMARY.md)** - Summary document
+ - **[RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md)** - Summary of restructuring (archived)
+ - **[RESTRUCTURING_GUIDE.md](docs/archived/RESTRUCTURING_GUIDE.md)** - Restructuring steps taken (archived)
+ - **[RESTRUCTURING_SUMMARY.md](docs/archived/RESTRUCTURING_SUMMARY.md)** - Summary document (archived)
 
 ### 📝 Additional References
 - **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Developer guidelines
@@ -71,7 +74,7 @@
 ### 👨‍💼 Project Manager / Stakeholder
 1. [START_HERE.md](START_HERE.md) - Get overview (5 min)
 2. [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - See what's done (5 min)
-3. [RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md) - Final summary (5 min)
+3. [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md) - Final summary (archived; kept for historical reference) (5 min)
 
 **Total: 15 minutes**
 

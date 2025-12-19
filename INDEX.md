@@ -39,6 +39,12 @@ curl http://localhost:5000/health
 - [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - Completion status
 - [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md) - What improved
 - [RESTRUCTURING_CERTIFICATE.md](RESTRUCTURING_CERTIFICATE.md) - Completion certificate
+ - [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - **Complete guide to all docs**
+ - [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Visual architecture & data flows
+ - [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Detailed structure explanation
+ - [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - Completion status
+ - [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - What improved (archived)
+ - [RESTRUCTURING_CERTIFICATE.md](docs/archived/RESTRUCTURING_CERTIFICATE.md) - Completion certificate (archived)
 
 ---
 
