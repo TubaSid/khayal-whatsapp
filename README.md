@@ -173,6 +173,80 @@ Bot: "That sounds like a really draining day, and it's no wonder
 
 ---
 
+## ⚡ Quickstart — Run locally
+
+Follow these steps to run the project locally on Windows (PowerShell). The app defaults to SQLite for local development; set `DATABASE_URL` to use PostgreSQL in production.
+
+### Prerequisites
+- Python 3.11 (see `runtime.txt`)
+- pip (or pip inside a virtual environment)
+- Optional: PostgreSQL (production), `ngrok` (local webhook testing)
+
+### Local setup (PowerShell)
+1. Clone the repo and change directory:
+    ```powershell
+    git clone https://github.com/TubaSid/khayal-whatsapp.git
+    cd khayal-whatsapp
+    ```
+2. Create and activate a virtual environment:
+    ```powershell
+    python -m venv .venv
+    .\.venv\Scripts\Activate.ps1
+    ```
+3. Install dependencies:
+    ```powershell
+    pip install -r requirements.txt
+    ```
+4. Copy and edit environment variables:
+    ```powershell
+    copy .env.example .env
+    # Edit .env and fill values (PHONE_NUMBER_ID, WHATSAPP_ACCESS_TOKEN, GROQ_API_KEY, etc.)
+    ```
+    Important env vars (see `.env.example`): `PHONE_NUMBER_ID`, `WHATSAPP_ACCESS_TOKEN`, `WEBHOOK_VERIFY_TOKEN`, `GROQ_API_KEY`, `SCHEDULER_SECRET`, `DATABASE_URL` (optional)
+5. Run the app:
+    ```powershell
+    python main.py
+    ```
+6. Verify the server is running:
+    ```powershell
+    curl http://localhost:5000/health
+    ```
+
+### Webhook testing (ngrok)
+1. Start ngrok to expose local port 5000 (in another terminal):
+    ```powershell
+    .\ngrok.exe http 5000
+    ```
+2. Use the public ngrok URL as your WhatsApp webhook URL and verify with `WEBHOOK_VERIFY_TOKEN`.
+
+### Run with Gunicorn (Linux / Production)
+Use the Gunicorn command on Linux-based hosts or in containers (not recommended on Windows):
+```bash
+gunicorn -w 4 -b 0.0.0.0:5000 "khayal.app:create_app()"
+```
+
+---
+
+## 🧪 Tests & Validation
+- Run the quick link-checker (available in repo):
+  ```powershell
+  python .check_links.py
+  ```
+- If you add unit tests, run:
+  ```powershell
+  pytest
+  ```
+
+---
+
+## 🔧 Troubleshooting
+- App doesn't start: ensure `.env` exists and required vars (e.g., `GROQ_API_KEY`) are set.
+- Webhook not reachable: use `ngrok` and confirm the public URL is configured in the WhatsApp Developer Console.
+- Database errors: set `DATABASE_URL` for Postgres or remove it to use SQLite (local `khayal.db`).
+- Gunicorn errors on Windows: run with `python main.py` locally, or use Gunicorn in Linux/containers.
+
+---
+
 ## 🏗️ Technical Architecture
 
 ### **Tech Stack**
