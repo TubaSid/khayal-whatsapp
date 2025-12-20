@@ -26,13 +26,6 @@ jobs:
 
       - name: Run link checker
         run: |
-          echo "DEBUG: show current working directory and files"
-          pwd
-          echo "--- ls -la ---"
-          ls -la
-          echo "--- recursive ls (top-level) ---"
-          ls -R
-          echo "Now running: python scripts/check_links.py"
           python scripts/check_links.py
           # Also run the legacy invocation to ensure the compatibility wrapper works
           python .check_links.py
