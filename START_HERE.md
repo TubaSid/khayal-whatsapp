@@ -20,9 +20,9 @@ Your WhatsApp companion application **Khayal** has been successfully restructure
 ### ✅ Comprehensive Documentation
 - **QUICKSTART.md** - First time setup (5 minutes)
 - **MIGRATION_GUIDE.md** - Detailed structure guide
-- **ARCHITECTURE_DIAGRAM.md** - Visual architecture & data flows
-- **IMPORT_REFERENCE.md** - Copy-paste import examples
-- **VERIFICATION_CHECKLIST.md** - What was completed
+- **ARCHITECTURE_DIAGRAM.md** - Visual architecture & data flows (moved to `docs/extras/`)
+- **IMPORT_REFERENCE.md** - Copy-paste import examples (moved to `docs/extras/`)
+- **VERIFICATION_CHECKLIST.md** - What was completed (moved to `docs/extras/`)
 
 ### ✅ Backward Compatible
 - Original files preserved
@@ -71,7 +71,7 @@ khayal-whatsapp/
 │
 ├── QUICKSTART.md                        ← Docs (start here!)
 ├── MIGRATION_GUIDE.md
-├── ARCHITECTURE_DIAGRAM.md
+├── docs/extras/ARCHITECTURE_DIAGRAM.md
 ├── IMPORT_REFERENCE.md
 └── VERIFICATION_CHECKLIST.md
 ```
@@ -110,10 +110,10 @@ curl http://localhost:5000/health
 | Document | Purpose | Read Time |
 |----------|---------|-----------|
 | **QUICKSTART.md** | Setup & common tasks | 5 min |
-| **IMPORT_REFERENCE.md** | Copy-paste imports | 3 min |
+| **IMPORT_REFERENCE.md** | Copy-paste imports (docs/extras/) | 3 min |
 | **MIGRATION_GUIDE.md** | Detailed structure | 10 min |
-| **ARCHITECTURE_DIAGRAM.md** | Visual architecture | 10 min |
-| **VERIFICATION_CHECKLIST.md** | What was completed | 5 min |
+| **ARCHITECTURE_DIAGRAM.md** | Visual architecture (docs/extras/) | 10 min |
+| **VERIFICATION_CHECKLIST.md** | What was completed (docs/extras/) | 5 min |
 
 **👉 Start with QUICKSTART.md if you haven't already!**
 
@@ -217,8 +217,8 @@ print(config.USE_POSTGRES)
 3. Test `/health` endpoint
 
 ### Soon
-1. Review ARCHITECTURE_DIAGRAM.md to understand data flows
-2. Use IMPORT_REFERENCE.md for copy-paste examples
+1. Review [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) to understand data flows
+2. Use [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) for copy-paste examples
 3. Test WhatsApp webhook integration
 
 ### Later
@@ -233,7 +233,7 @@ print(config.USE_POSTGRES)
 A: Read QUICKSTART.md for 5-minute setup
 
 **Q: How do I import components?**
-A: Check IMPORT_REFERENCE.md for examples
+A: Check [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) for examples
 
 **Q: What happened to the old files?**
 A: Still there for backward compatibility. New modules wrap them.
@@ -298,10 +298,10 @@ Your application is production-ready:
 | Resource | Purpose |
 |----------|---------|
 | [QUICKSTART.md](QUICKSTART.md) | Setup & first steps |
-| [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) | Code examples |
-| [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) | Detailed structure |
-| [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) | Visual overview |
-| [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) | What was done |
+| [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) | Code examples |
+| [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) | Detailed structure |
+| [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) | Visual overview |
+| [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) | What was done |
 
 ---
 

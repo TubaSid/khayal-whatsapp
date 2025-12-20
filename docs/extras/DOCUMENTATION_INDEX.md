@@ -3,16 +3,16 @@
 ## 🎯 Start Here
 
 ### First Time Reading?
-👉 **Start with [START_HERE.md](START_HERE.md)** - High-level overview (5 min)
+👉 **Start with [START_HERE.md](../../START_HERE.md)** - High-level overview (5 min)
 
 ### Setting Up Locally?
-👉 **Read [QUICKSTART.md](QUICKSTART.md)** - Setup & first steps (5 min)
+👉 **Read [QUICKSTART.md](../../QUICKSTART.md)** - Setup & first steps (5 min)
 
 ### Need Code Examples?
 👉 **Check [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)** - Copy-paste imports (3 min)
 
 ### Want to contribute?
-👉 **Read [CONTRIBUTING.md](CONTRIBUTING.md)** - How to contribute (2 min)
+👉 **Read [CONTRIBUTING.md](../../CONTRIBUTING.md)** - How to contribute (2 min)
 
 ---
 
@@ -22,8 +22,8 @@
 
 | Document | Purpose | Audience | Time |
 |----------|---------|----------|------|
-| [START_HERE.md](START_HERE.md) | Overview and getting started | Everyone | 5 min |
-| [QUICKSTART.md](QUICKSTART.md) | Setup, structure, common tasks | Developers | 5 min |
+| [START_HERE.md](../../START_HERE.md) | Overview and getting started | Everyone | 5 min |
+| [QUICKSTART.md](../../QUICKSTART.md) | Setup, structure, common tasks | Developers | 5 min |
 | [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) | Copy-paste import examples | Developers | 3 min |
 
 ### 📐 Architecture & Design (20 minutes)
@@ -45,11 +45,11 @@
 ## 📋 Directory of All Docs
 
 ### 🎯 High-Level
-- **[START_HERE.md](START_HERE.md)** - Best entry point with overview
-- **[README.md](README.md)** - Project README
+-- **[START_HERE.md](../../START_HERE.md)** - Best entry point with overview
+-- **[README.md](../../README.md)** - Project README
 
 ### 🛠️ Developer Guides
-- **[QUICKSTART.md](QUICKSTART.md)** - First-time setup and development
+- **[QUICKSTART.md](../../QUICKSTART.md)** - First-time setup and development
 - **[IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)** - How to import and use modules
 - **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Detailed structure explanation
 
@@ -72,15 +72,15 @@
 ## 🗺️ Reading Paths by Role
 
 ### 👨‍💼 Project Manager / Stakeholder
-1. [START_HERE.md](START_HERE.md) - Get overview (5 min)
+1. [START_HERE.md](../../START_HERE.md) - Get overview (5 min)
 2. [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - See what's done (5 min)
 3. [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md) - Final summary (archived; kept for historical reference) (5 min)
 
 **Total: 15 minutes**
 
 ### 👨‍💻 Developer (First Time)
-1. [START_HERE.md](START_HERE.md) - Overview (5 min)
-2. [QUICKSTART.md](QUICKSTART.md) - Setup (5 min)
+1. [START_HERE.md](../../START_HERE.md) - Overview (5 min)
+2. [QUICKSTART.md](../../QUICKSTART.md) - Setup (5 min)
 3. [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) - Code examples (3 min)
 4. Run: `python main.py` (1 min)
 
@@ -90,12 +90,12 @@
 1. [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Visual overview (10 min)
 2. [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Details (10 min)
 3. Review code in `khayal/` package
-4. [QUICKSTART.md](QUICKSTART.md) - Development reference (5 min)
+4. [QUICKSTART.md](../../QUICKSTART.md) - Development reference (5 min)
 
 **Total: 25 minutes + code review**
 
 ### 🧪 QA / Testing
-1. [QUICKSTART.md](QUICKSTART.md) - Setup (5 min)
+1. [QUICKSTART.md](../../QUICKSTART.md) - Setup (5 min)
 2. [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) - Testing examples (3 min)
 3. [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - What to test (5 min)
 4. Endpoints to test:
@@ -110,8 +110,8 @@
 ## 🎓 Learning the Codebase
 
 ### Level 1: Overview (30 minutes)
-1. Read [START_HERE.md](START_HERE.md) (5 min)
-2. Read [QUICKSTART.md](QUICKSTART.md) (5 min)
+1. Read [START_HERE.md](../../START_HERE.md) (5 min)
+2. Read [QUICKSTART.md](../../QUICKSTART.md) (5 min)
 3. Review `khayal/` folder structure
 4. Run `python main.py` and test `/health` (10 min)
 5. Read [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) (5 min)
@@ -137,7 +137,7 @@
 ## 🔍 Finding Specific Information
 
 ### "How do I get started?"
-→ [QUICKSTART.md](QUICKSTART.md)
+→ [QUICKSTART.md](../../QUICKSTART.md)
 
 ### "How do I import CrisisDetector?"
 → [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) → Crisis Detection section
@@ -146,7 +146,7 @@
 → [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)
 
 ### "How do I add a new endpoint?"
-→ [QUICKSTART.md](QUICKSTART.md) → Common Tasks section
+→ [QUICKSTART.md](../../QUICKSTART.md) → Common Tasks section
 
 ### "What was restructured?"
 → [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md)
@@ -297,8 +297,8 @@
 
 For first-time users:
 1. This index (2 min) ← You are here!
-2. [START_HERE.md](START_HERE.md) (5 min)
-3. [QUICKSTART.md](QUICKSTART.md) (5 min)
+2. [START_HERE.md](../../START_HERE.md) (5 min)
+3. [QUICKSTART.md](../../QUICKSTART.md) (5 min)
 4. Run `python main.py` (1 min)
 5. Test `/health` endpoint (1 min)
 6. [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) as needed (3 min)
@@ -309,10 +309,10 @@ For first-time users:
 
 ## 🆘 Need Help?
 
-1. **Setup issues?** → [QUICKSTART.md](QUICKSTART.md) → Troubleshooting
+1. **Setup issues?** → [QUICKSTART.md](../../QUICKSTART.md) → Troubleshooting
 2. **Import errors?** → [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) → Troubleshooting Imports
 3. **Architecture questions?** → [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)
-4. **Adding features?** → [QUICKSTART.md](QUICKSTART.md) → Common Tasks
+4. **Adding features?** → [QUICKSTART.md](../../QUICKSTART.md) → Common Tasks
 5. **Deployment?** → [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) → Deployment section
 
 ---

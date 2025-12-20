@@ -4,13 +4,12 @@
 
 ```bash
 # 1. Setup
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# 2. Configure
+-- [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) - Visual architecture & data flows
+-- [DOCUMENTATION_INDEX.md](docs/extras/DOCUMENTATION_INDEX.md) - **Complete guide to all docs**
+-- [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) - Detailed structure explanation
+-- [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) - Completion status
+-- [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - What improved (archived)
 cp .env.example .env
-# Edit .env with your API keys
 
 # 3. Run
 python main.py
@@ -20,68 +19,44 @@ curl http://localhost:5000/health
 ```
 
 ---
-
 ## 📚 Documentation
 
 ### 👉 **Start Here** (Pick One)
-
 | For | Document | Time |
 |-----|----------|------|
 | **Everyone** | [START_HERE.md](START_HERE.md) | 5 min |
-| **Developers** | [QUICKSTART.md](QUICKSTART.md) | 5 min |
-| **Code Examples** | [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) | 3 min |
+| **Code Examples** | [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) | 3 min |
 
 ### 📖 Full Documentation
 
-- [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - **Complete guide to all docs**
-- [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Visual architecture & data flows
-- [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Detailed structure explanation
-- [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - Completion status
-- [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md) - What improved
-- [RESTRUCTURING_CERTIFICATE.md](RESTRUCTURING_CERTIFICATE.md) - Completion certificate
- - [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - **Complete guide to all docs**
- - [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Visual architecture & data flows
- - [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Detailed structure explanation
- - [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - Completion status
- - [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - What improved (archived)
- - [RESTRUCTURING_CERTIFICATE.md](docs/archived/RESTRUCTURING_CERTIFICATE.md) - Completion certificate (archived)
+- [DOCUMENTATION_INDEX.md](docs/extras/DOCUMENTATION_INDEX.md) - **Complete guide to all docs**
+- [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) - Visual architecture & data flows
+- [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) - Detailed structure explanation
+- [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) - Completion status
+- [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - What improved (archived)
+- [RESTRUCTURING_CERTIFICATE.md](docs/archived/RESTRUCTURING_CERTIFICATE.md) - Completion certificate (archived)
+ - [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) - Detailed structure explanation
+ - [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) - Completion status
+- [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - What improved (archived)
+- [RESTRUCTURING_CERTIFICATE.md](docs/archived/RESTRUCTURING_CERTIFICATE.md) - Completion certificate (archived)
 
 ---
 
 ## 🎯 By Role
-
 ### Project Manager
-Read: [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) (5 min)
+Read: [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) (5 min)
 
 ### Developer (First Time)
-1. [QUICKSTART.md](QUICKSTART.md) (5 min)
-2. [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) (3 min)
-3. Run `python main.py`
-
-### Architect
-Read: [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) (10 min)
-
-### QA/Testing
-Read: [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) (5 min)
 
 ---
-
-## 📦 Project Structure
-
-```
-khayal/                          Main package
-├── core/                        Business logic (4 modules)
-├── database/                    Data layer
-├── routes/                      API endpoints (4 blueprints)
 ├── whatsapp/                    WhatsApp integration
-├── utils/                       Utilities
 ├── app.py                       Flask factory
 └── config.py                    Configuration
 
-main.py                         Entry point
 ```
 
-**Full details**: [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
+1. [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) (10 min)
+**Full details**: [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md)
 
 ---
 
@@ -140,7 +115,7 @@ config = get_config()
 print(config.GROQ_API_KEY)
 ```
 
-**More examples**: [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)
+**More examples**: [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md)
 
 ---
 
@@ -154,7 +129,7 @@ print(config.GROQ_API_KEY)
 - Testability: ⭐⭐⭐⭐⭐ (was ⭐)
 - Scalability: ⭐⭐⭐⭐⭐ (was ⭐)
 
-**Full comparison**: [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md)
+**Full comparison**: [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md)
 
 ---
 
@@ -167,7 +142,7 @@ A: [START_HERE.md](START_HERE.md) or [QUICKSTART.md](QUICKSTART.md)
 A: `python main.py` (after setup)
 
 **Q: How do I import components?**  
-A: See [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md)
+A: See [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md)
 
 **Q: What happened to the old files?**  
 A: Still there! New modules wrap them for backward compatibility.
@@ -181,18 +156,18 @@ A: Yes! Fully production ready for deployment.
 
 ### 15 Minutes (Manager/Stakeholder)
 1. [START_HERE.md](START_HERE.md) (5 min)
-2. [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) (5 min)
-3. [RESTRUCTURING_COMPLETE.md](RESTRUCTURING_COMPLETE.md) (5 min)
+2. [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) (5 min)
+3. [RESTRUCTURING_COMPLETE.md](docs/archived/RESTRUCTURING_COMPLETE.md) (5 min)
 
 ### 14 Minutes (Developer First Time)
 1. [START_HERE.md](START_HERE.md) (5 min)
 2. [QUICKSTART.md](QUICKSTART.md) (5 min)
-3. [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) (3 min)
+3. [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) (3 min)
 4. Run app (1 min)
 
 ### 25 Minutes (Architect)
-1. [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) (10 min)
-2. [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) (10 min)
+1. [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) (10 min)
+2. [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) (10 min)
 3. Review code (5 min)
 
 ---
@@ -211,8 +186,8 @@ A: Yes! Fully production ready for deployment.
 ## 📞 Need Help?
 
 - **Setup issues?** → [QUICKSTART.md](QUICKSTART.md) Troubleshooting
-- **Import errors?** → [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) Troubleshooting
-- **Architecture?** → [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)
+- **Import errors?** → [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) Troubleshooting
+- **Architecture?** → [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md)
 - **Adding features?** → [QUICKSTART.md](QUICKSTART.md) Common Tasks
 
 ---
@@ -222,13 +197,13 @@ A: Yes! Fully production ready for deployment.
 ### Documentation (8+ guides)
 - [START_HERE.md](START_HERE.md) - Overview & getting started
 - [QUICKSTART.md](QUICKSTART.md) - Setup & development
-- [IMPORT_REFERENCE.md](IMPORT_REFERENCE.md) - Code examples
-- [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) - Detailed structure
-- [ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md) - Visual diagrams
-- [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) - Completion
-- [BEFORE_AFTER_COMPARISON.md](BEFORE_AFTER_COMPARISON.md) - Improvements
-- [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) - Doc index
-- [RESTRUCTURING_CERTIFICATE.md](RESTRUCTURING_CERTIFICATE.md) - Certificate
+- [IMPORT_REFERENCE.md](docs/extras/IMPORT_REFERENCE.md) - Code examples
+- [MIGRATION_GUIDE.md](docs/extras/MIGRATION_GUIDE.md) - Detailed structure
+- [ARCHITECTURE_DIAGRAM.md](docs/extras/ARCHITECTURE_DIAGRAM.md) - Visual diagrams
+- [VERIFICATION_CHECKLIST.md](docs/extras/VERIFICATION_CHECKLIST.md) - Completion
+- [BEFORE_AFTER_COMPARISON.md](docs/archived/BEFORE_AFTER_COMPARISON.md) - Improvements (archived)
+- [DOCUMENTATION_INDEX.md](docs/extras/DOCUMENTATION_INDEX.md) - Doc index
+- [RESTRUCTURING_CERTIFICATE.md](docs/archived/RESTRUCTURING_CERTIFICATE.md) - Certificate (archived)
 
 ### Code (13 Python modules)
 - `khayal/core/` - Business logic

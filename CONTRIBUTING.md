@@ -22,7 +22,7 @@ Thanks for helping improve Khayal! This document summaries the key workflow and 
 - Update `VERIFICATION_CHECKLIST.md` if you change release or verification steps.
 
 ## Documentation
-- Keep `DOCUMENTATION_INDEX.md` up-to-date when adding or removing docs.
+ - Keep `docs/extras/DOCUMENTATION_INDEX.md` up-to-date when adding or removing docs.
 - Large changes should include a short doc explaining migration or rationale.
 
 Thanks — your contributions matter. If you have questions, open an issue or ping a maintainer.
