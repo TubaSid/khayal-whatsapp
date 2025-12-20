@@ -75,7 +75,7 @@ The bottleneck shifted from **writing code** to:
 - ✅ **Message Debouncing** - Waits for complete thoughts (4s delay)
 - ✅ **Context Awareness** - Remembers last 10 conversations
 - ✅ **Cultural Sensitivity** - Natural Hinglish, not forced translation
-- ✅ **Crisis Resources** - Immediate helpline numbers for India
+- ✅ **Crisis Resources** - Immediate helpline numbers for India / Pak / Bangladesh
 
 ---
 
@@ -177,7 +177,7 @@ Bot: "That sounds like a really draining day, and it's no wonder
 
 ### **Tech Stack**
 ```
-Frontend:  WhatsApp (400M+ users in India, zero install)
+Frontend:  WhatsApp (400M+ users in India / Pak / Bangladesh, zero install)
 Backend:   Python 3.11 + Flask + Gunicorn
 AI:        Groq (Llama 3.3 70B, free tier, 400 tok/s)
 Database:  PostgreSQL (Render managed)

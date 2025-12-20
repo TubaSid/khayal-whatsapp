@@ -252,7 +252,7 @@ pylint khayal/
 
 ## Next Steps
 
-1. Read `MIGRATION_GUIDE.md` for detailed structure info
+1. Read `docs/extras/MIGRATION_GUIDE.md` for detailed structure info
 2. Check individual module docstrings for usage
 3. Review `whatsapp_webhook_v4.py` to understand original logic
 4. Gradually migrate helper functions to appropriate modules

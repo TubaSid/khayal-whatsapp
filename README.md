@@ -75,7 +75,7 @@ The bottleneck shifted from **writing code** to:
 - ✅ **Message Debouncing** - Waits for complete thoughts (4s delay)
 - ✅ **Context Awareness** - Remembers last 10 conversations
 - ✅ **Cultural Sensitivity** - Natural Hinglish, not forced translation
-- ✅ **Crisis Resources** - Immediate helpline numbers for India
+- ✅ **Crisis Resources** - Immediate helpline numbers for India / Pak / Bangladesh
 
 ---
 
@@ -257,7 +257,7 @@ gunicorn -w 4 -b 0.0.0.0:5000 "khayal.app:create_app()"
 
 ### **Tech Stack**
 ```
-Frontend:  WhatsApp (400M+ users in India, zero install)
+Frontend:  WhatsApp (400M+ users in India / Pak / Bangladesh, zero install)
 Backend:   Python 3.11 + Flask + Gunicorn
 AI:        Groq (Llama 3.3 70B, free tier, 400 tok/s)
 Database:  PostgreSQL (Render managed)
@@ -301,6 +301,7 @@ messages
 
 ### Documentation cleanup
 To keep the project top-level tidy, redundant restructuring documents have been archived to `docs/archived/` and removed from the repository root. If you need historical migration notes or one-off artifacts, you'll find them in that directory.
+Additional non-essential documentation has been grouped under `docs/extras/` to reduce clutter at the repository root — essential quick-start and onboarding docs remain at the top level.
 If you'd like to contribute, please see the contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md).
 user_preferences
 ├── user_id (PK, FK → users)
