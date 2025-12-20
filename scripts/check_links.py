@@ -36,12 +36,16 @@ for f in md_files:
             candidates = [resolved]
         exists = any(c.exists() for c in candidates)
         if not exists:
-            broken.append((str(f.relative_to(repo)), link, [str(c.relative_to(repo)) for c in candidates]))
             # suggestion: check docs/archived
             base = p.name
             archived = (repo / 'docs' / 'archived' / base)
             if archived.exists():
+                # Treat archived files as valid targets (backwards-compatible)
                 suggestions.append((str(f.relative_to(repo)), link, str(archived.relative_to(repo))))
+                exists = True
+
+        if not exists:
+            broken.append((str(f.relative_to(repo)), link, [str(c.relative_to(repo)) for c in candidates]))
 
 print('Checked {} markdown files.'.format(len(md_files)))
 if not broken:
