@@ -229,9 +229,15 @@ gunicorn -w 4 -b 0.0.0.0:5000 "khayal.app:create_app()"
 
 ## 🧪 Tests & Validation
 - Run the quick link-checker (available in repo):
-  ```powershell
-  python .check_links.py
-  ```
+    ```powershell
+    python scripts/check_links.py
+    ```
+
+    Note: for backward compatibility the repository includes a small wrapper at
+    the project root named `.check_links.py` so the older invocation also works:
+    ```powershell
+    python .check_links.py  # delegates to scripts/check_links.py
+    ```
 - If you add unit tests, run:
   ```powershell
   pytest
