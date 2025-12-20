@@ -1,4 +1,27 @@
-﻿import re
+﻿#!/usr/bin/env python3
+"""Compatibility wrapper for the link checker.
+
+Some CI runs or README examples reference ``.check_links.py`` at the
+repository root. The real script lives at ``scripts/check_links.py``.
+This tiny wrapper delegates execution so both invocation styles work.
+"""
+from __future__ import annotations
+
+import runpy
+import sys
+
+
+if __name__ == "__main__":
+    # Ensure the script runs as if executed directly from the repo root.
+    # If the delegated script raises SystemExit, propagate it so its
+    # non-zero exit code is preserved. Otherwise exit with 0.
+    try:
+        runpy.run_path("scripts/check_links.py", run_name="__main__")
+    except SystemExit:
+        raise
+    else:
+        sys.exit(0)
+import re
 from pathlib import Path
 
 pattern = re.compile(r'\[.*?\]\((.*?)\)')
