@@ -6,6 +6,8 @@ An experiment in **AI-assisted engineering**: Can you build a secure, scalable, 
 
 **Answer: Yes.** This project proves that with the right prompting, architecture decisions, and quality assurance, AI can be a reliable co-developer for real-world applications.
 
+Detailed post on [Medium](https://tubasid.medium.com/i-built-a-production-mental-health-app-in-2-weeks-with-ai-95-code-generated-100-human-judgment-c14d7b31d5a4).
+
 ---
 
 ## 🎯 Project Mission
