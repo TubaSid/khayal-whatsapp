@@ -1,4 +1,5 @@
 # 🌙 Khayal - AI-Powered Mental Wellness Companion
+[![Release](https://img.shields.io/github/v/release/TubaSid/khayal-whatsapp)](https://github.com/TubaSid/khayal-whatsapp/releases/latest)
 
 > **A Production-Grade WhatsApp Bot Built Entirely Through AI Collaboration**
 
